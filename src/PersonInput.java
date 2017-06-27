@@ -24,6 +24,7 @@ public class PersonInput {
         dialog = new Stage();
         dialog.initOwner(owner);
         dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.setResizable(false);
     }
 
     /////////////////////////////////////// Getters ///////////////////////////////////////

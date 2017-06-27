@@ -3,6 +3,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -48,6 +49,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         makeUI(primaryStage);
+        primaryStage.setResizable(false);
     }
 
     private  void makeUI(Stage stage){
@@ -60,6 +62,25 @@ public class Main extends Application {
 
         stage.setScene(new Scene(gridPane(numPeople,people)));
         btnReset.setOnAction(event -> reset(stage));
+        txtPrice.requestFocus();
+
+        // TODO: 27/06/2017 fix me
+        // Tie all the scroll bars to the total list view
+        Node totalNode = lstTotal.lookup(".scrollbar");
+        if (totalNode instanceof ScrollBar) {
+            final ScrollBar totalScroll = (ScrollBar) totalNode;
+
+            for (ListView listView : lstPricing) {
+                Node pricingNode = listView.lookup(".scrollbar");
+                if (pricingNode instanceof ScrollBar) {
+                    final ScrollBar scrollBar = (ScrollBar) pricingNode;
+                    totalScroll.valueProperty().bindBidirectional(scrollBar.valueProperty());
+                }
+            }
+        }
+
+
+
         stage.show();
     }
 
@@ -132,7 +153,7 @@ public class Main extends Application {
             btnRemove.setAlignment(Pos.CENTER);
 
             btnAdd.setOnAction(this::addPrice);
-            btnRemove.setOnAction(this::removePrice);
+            btnRemove.setOnAction(event -> removePrice());
 
             vBoxButtons.getChildren().addAll(btnAdd,btnRemove);
             vBoxButtons.setAlignment(Pos.CENTER);
@@ -168,12 +189,10 @@ public class Main extends Application {
         }
         vBoxTotals.setAlignment(Pos.CENTER_LEFT);
 
-        updateLabels();
-
         // Create Button
         Button btnFinish = new Button("Finish");
         btnFinish.setAlignment(Pos.CENTER_RIGHT);
-        btnFinish.setOnAction(this::finish);
+        btnFinish.setOnAction(event -> finish());
         btnReset = new Button("Reset");
         btnReset.setAlignment(Pos.CENTER_RIGHT);
 
@@ -189,8 +208,6 @@ public class Main extends Application {
         VBox vBoxRight = new VBox(hBoxTop,vBoxMiddle,hBoxBottom);
 
         //////////////////////// Left Side ////////////////////////
-
-        // TODO: 19/03/2017 See if listviews can be combined
 
         // Create table replacement
         lstPricing = new ListView[numPeople];
@@ -216,6 +233,8 @@ public class Main extends Application {
         }
         hBoxPricing.getChildren().add(vBoxTotal);
 
+        updateLabels();
+
         //////////////////////// Grid Pane ////////////////////////
 
         GridPane gridPane = new GridPane();
@@ -235,6 +254,9 @@ public class Main extends Application {
             label.setText(Formatting.formatTotal(person.getName(),person.getTotalCost()));
         }
         lblTotal.setText(Formatting.formatTotal(total));
+
+        // Scroll to the bottom of the total list view
+        lstTotal.scrollTo(lstTotal.getItems().size() - 1);
     }
 
     /////////////////////////////////////// Button Events ///////////////////////////////////////
@@ -257,14 +279,14 @@ public class Main extends Application {
         txtPrice = null;
         btnReset = null;    }
 
-    public  void finish(ActionEvent event) {
+    public  void finish() {
         // TODO: 31/10/2016 Request if the prices should be output to a log
 
         // Close the program
         Platform.exit();
     }
 
-    public  void removePrice(ActionEvent event) {
+    public  void removePrice() {
         // Find the selected row
         int id = -1; // Default value
         for (ListView<String> listView : lstPricing) {
