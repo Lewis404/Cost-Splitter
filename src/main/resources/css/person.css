@@ -1,0 +1,25 @@
+.border{
+    -fx-pref-height: 400;
+    -fx-pref-width: 225;
+    -fx-background-color: #ffffff;
+}
+
+.scroll-pane{
+    -fx-background-color: #ffffff;
+}
+
+.button-container {
+    -fx-alignment: center-left;
+    -fx-pref-width: 216;
+    -fx-pref-height: 48;
+}
+
+.jfx-button {
+    -fx-font-size: 14;
+    -fx-background-color: rgb(77,102,204);
+    -fx-text-fill: #ffffff;
+}
+
+.title {
+    -fx-font-size: 34;
+}

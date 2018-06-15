@@ -1,46 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXChipView?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.effect.DropShadow?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<BorderPane fx:id="container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #ACACAC;"
-            xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.lewis.costsplitter.controller.People">
-    <center>
-        <JFXChipView fx:id="chips" style="-fx-background-color: #FFFFFF;" BorderPane.alignment="CENTER">
-            <BorderPane.margin>
-                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
-            </BorderPane.margin>
-            <effect>
-                <DropShadow color="#8a8989"/>
-            </effect>
-        </JFXChipView>
-    </center>
+
+<BorderPane fx:id="container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="226.0" styleClass="border" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lewis.costsplitter.controller.People">
     <bottom>
-        <JFXButton fx:id="btnSubmit" buttonType="RAISED" onAction="#submit" style="-fx-background-color: #ffffff;"
-                   text="Add People" BorderPane.alignment="CENTER">
+        <TilePane alignment="CENTER_LEFT" prefHeight="48.0" prefWidth="216.0" BorderPane.alignment="CENTER">
             <BorderPane.margin>
-                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </BorderPane.margin>
-            <font>
-                <Font size="29.0"/>
-            </font>
-        </JFXButton>
+            <children>
+                <JFXButton fx:id="btnSubmit" buttonType="RAISED" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#submit" text="Add People">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                    <TilePane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </TilePane.margin>
+                </JFXButton>
+                <JFXButton fx:id="btnCancel" buttonType="RAISED" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#close" text="Cancel">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                    <TilePane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </TilePane.margin>
+                </JFXButton>
+            </children>
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+        </TilePane>
     </bottom>
     <top>
         <Label text="People" BorderPane.alignment="CENTER">
             <font>
-                <Font size="33.0"/>
+                <Font size="33.0" />
             </font>
             <BorderPane.margin>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
             </BorderPane.margin>
         </Label>
     </top>
+    <center>
+        <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets left="10.0" right="10.0" />
+            </BorderPane.margin>
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+            <JFXTextField fx:id="txtPerson" onAction="#addPerson" promptText="Person...">
+                <VBox.margin>
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                </VBox.margin>
+                <padding>
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                </padding>
+            </JFXTextField>
+            <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0" prefWidth="186.0">
+                <VBox.margin>
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                </VBox.margin>
+                <content>
+                    <VBox fx:id="chipPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="scroll-pane" />
+                </content>
+            </ScrollPane>
+        </VBox>
+    </center>
+   <stylesheets>
+      <URL value="@../css/chip.css" />
+      <URL value="@../css/person.css" />
+   </stylesheets>
 </BorderPane>
