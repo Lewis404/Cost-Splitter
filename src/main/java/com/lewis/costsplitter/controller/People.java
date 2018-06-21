@@ -5,25 +5,22 @@ package com.lewis.costsplitter.controller;
  * Time: 17:42
  */
 
-import com.jfoenix.controls.JFXAutoCompletePopup;
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXScrollPane;
 import com.jfoenix.controls.JFXTextField;
 import com.lewis.costsplitter.component.CustomChip;
-import com.lewis.costsplitter.utils.FileUtils;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 public class People {
@@ -31,7 +28,7 @@ public class People {
 	@FXML public JFXButton    btnSubmit;
 	@FXML public JFXButton    btnCancel;
 	@FXML public JFXTextField txtPerson;
-	@FXML public VBox         chipPane;
+	@FXML public VBox         chipBox;
 	@FXML public BorderPane   container;
 	@FXML public ScrollPane   scrollPane;
 
@@ -39,7 +36,7 @@ public class People {
 
 	@FXML
 	public void initialize() {
-		names = loadNames();
+//		names = FileUtils.Autocomplete.Names.load();
 
 		// Set the scene to be not be resizeable
 		container.sceneProperty().addListener(((obsScene, oldScene, newScene) -> {
@@ -51,6 +48,25 @@ public class People {
 				}));
 			}
 		}));
+
+		JFXScrollPane.smoothScrolling(scrollPane);
+
+		// TODO: 21/06/2018 Figure out why fading isn't being applied and the nodes are not being retrieved correctly
+//		scrollPane.vvalueProperty().addListener(
+//				(observable, oldValue, newValue) -> performFade(getVisibleNodes(scrollPane, false), scrollPane,
+//				                                                false));
+//
+//		chipBox.getChildren().addListener((ListChangeListener<Node>) c -> {
+//			while (c.next()) {
+//				if (c.wasRemoved()) {
+//					chipBox.getChildren().forEach(node -> node.setOpacity(1.0));
+//					List<Node> nodes = getVisibleNodes(scrollPane, true);
+//					nodes.forEach(System.out::println);
+//					performFade(nodes, scrollPane, true);
+//				}
+//			}
+//		});
+
 // TODO: 15/06/2018 Try to get autocomplete working
 //		JFXAutoCompletePopup<String> autoComplete = new JFXAutoCompletePopup<>();
 //		autoComplete.getSuggestions().addAll(names);
@@ -66,30 +82,10 @@ public class People {
 //				autoComplete.show(txtPerson);
 //			}
 //		});
-	}
 
-	private Set<String> loadNames() {
-		try {
-			Path         path  = FileUtils.getResourcePath("auto-complete/people.txt");
-			List<String> names = Files.readAllLines(path, Charset.defaultCharset());
-			System.out.println(names);
-			return new HashSet<>(names);
-		} catch (URISyntaxException | IOException e) {
-			e.printStackTrace();
-		}
-		return new HashSet<>();
-	}
-
-	private void saveNames(Set<String> names) {
-		if (!names.isEmpty()) {
-			try {
-				Path          path    = FileUtils.getResourcePath("auto-complete/people.txt");
-				StringBuilder builder = new StringBuilder("\n");
-				names.forEach(s -> builder.append(s).append("\n"));
-				Files.write(path, builder.toString().getBytes(), StandardOpenOption.APPEND);
-			} catch (URISyntaxException | IOException e) {
-				e.printStackTrace();
-			}
+		txtPerson.requestFocus();
+		for (int i = 0; i < 20; i++) {
+			addPerson("chip" + i);
 		}
 	}
 
@@ -97,7 +93,7 @@ public class People {
 	public void submit() {
 		List<String> text     = new ArrayList<>();
 		Set<String>  newNames = new HashSet<>();
-		for (Iterator<Node> iterator = chipPane.getChildren().iterator(); iterator.hasNext(); ) {
+		for (Iterator<Node> iterator = chipBox.getChildren().iterator(); iterator.hasNext(); ) {
 			CustomChip chip = (CustomChip) iterator.next();
 			String     name = chip.getText();
 			text.add(name);
@@ -112,16 +108,19 @@ public class People {
 //		stage.close();
 		System.out.println(text);
 		System.out.println(newNames);
-		saveNames(newNames);
+//		FileUtils.Autocomplete.Names.save(newNames, StandardOpenOption.APPEND);
 	}
 
 	@FXML
 	public void addPerson() {
-		String text = txtPerson.getText();
+		addPerson(txtPerson.getText());
+	}
+
+	public void addPerson(String text) {
 		if (!text.isEmpty()) {
 			CustomChip chip = new CustomChip();
 			chip.setText(text);
-			chipPane.getChildren().add(chip);
+			chipBox.getChildren().add(chip);
 			txtPerson.clear();
 			txtPerson.requestFocus();
 		}
@@ -130,5 +129,58 @@ public class People {
 	@FXML
 	public void close(ActionEvent event) {
 		((Stage) ((Node) event.getSource()).getScene().getWindow()).close();
+	}
+
+	private void performFade(List<Node> nodes, ScrollPane pane, boolean refresh) {
+		Bounds paneBounds = pane.localToScene(pane.getBoundsInParent());
+
+		for (int i = 0; i < nodes.size(); i++) {
+			Node   node        = nodes.get(i);
+			Bounds localBounds = node.localToScene(node.getBoundsInLocal());
+			double opacity     = 1.0; // Set to 1 by default
+			if (i == 0 && localBounds.getMinY() < 0) { // Scrolling out of the top
+				opacity = (localBounds.getMinY() + localBounds.getHeight()) / localBounds.getHeight();
+			}
+			if ((i == (nodes.size() - 1)) &&
+			    (localBounds.getMaxY() > paneBounds.getMaxY())) { // Scrolling out of the bottom
+				// On refresh the last item will be recognised as off the pane still as the removed element isn't
+				// removed from the children yet
+				opacity = (localBounds.getHeight() -
+				           (localBounds.getMaxY() - paneBounds.getMaxY() - (refresh ? localBounds.getHeight() : 0.0)
+				           )) /
+				          localBounds.getHeight();
+			}
+			node.setOpacity(opacity);
+		}
+	}
+
+	private List<Node> getVisibleNodes(ScrollPane pane, boolean refresh) {
+		Set<Node> visibleNodes = new LinkedHashSet<>();
+		Bounds    paneBounds   = pane.localToScene(pane.getBoundsInParent());
+		printBounds(paneBounds, "\npane");
+		if (pane.getContent() instanceof Parent) {
+			ObservableList<Node> childrenUnmodifiable = ((Parent) pane.getContent()).getChildrenUnmodifiable();
+			for (int i = 0; i < childrenUnmodifiable.size(); i++) {
+				Node   node       = childrenUnmodifiable.get(i);
+				Bounds nodeBounds = node.localToScene(node.getBoundsInLocal());
+				printBounds(nodeBounds, ((CustomChip) node).getText());
+				if (paneBounds.intersects(nodeBounds)) {
+					visibleNodes.add(node);
+					if (refresh && i + 1 < childrenUnmodifiable.size()) {
+						visibleNodes.add(childrenUnmodifiable.get(i + 1));
+					}
+				}
+			}
+		}
+		System.out.println("######################");
+		System.out.println("Visible");
+		visibleNodes.forEach(node -> printBounds(node.localToScene(node.getLayoutBounds()), ((CustomChip) node).getText()));
+		return new ArrayList<>(visibleNodes);
+	}
+
+	private void printBounds(Bounds bounds, String name) {
+		System.out.print(name + " -> ");
+		System.out.printf("BoundingBox [minX:%s, minY:%s, width:%s, height:%s, maxX:%s, maxY:%s]%n", bounds.getMinX(),
+		                  bounds.getMinY(), bounds.getWidth(), bounds.getHeight(), bounds.getMaxX(), bounds.getMaxY());
 	}
 }

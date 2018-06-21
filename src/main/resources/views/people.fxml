@@ -2,82 +2,84 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXTextField?>
-<?import java.net.URL?>
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.TilePane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-
-<BorderPane fx:id="container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="226.0" styleClass="border" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lewis.costsplitter.controller.People">
+<?import java.net.URL?>
+<BorderPane fx:id="container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="520.0" prefWidth="226.0" styleClass="border" xmlns="http://javafx.com/javafx/8.0.171"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lewis.costsplitter.controller.People">
     <bottom>
-        <TilePane alignment="CENTER_LEFT" prefHeight="48.0" prefWidth="216.0" BorderPane.alignment="CENTER">
+        <GridPane alignment="CENTER" hgap="5.0" vgap="5.0" BorderPane.alignment="CENTER">
             <BorderPane.margin>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
             </BorderPane.margin>
-            <children>
-                <JFXButton fx:id="btnSubmit" buttonType="RAISED" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#submit" text="Add People">
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                    <TilePane.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                    </TilePane.margin>
-                </JFXButton>
-                <JFXButton fx:id="btnCancel" buttonType="RAISED" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#close" text="Cancel">
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                    <TilePane.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                    </TilePane.margin>
-                </JFXButton>
-            </children>
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+            </rowConstraints>
             <padding>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
             </padding>
-        </TilePane>
+            <JFXButton fx:id="btnSubmit" buttonType="RAISED" maxHeight="1.7976931348623157E308"
+                       maxWidth="1.7976931348623157E308" onAction="#submit" text="Add People">
+                <font>
+                    <Font size="14.0"/>
+                </font>
+            </JFXButton>
+            <JFXButton fx:id="btnCancel" alignment="CENTER" buttonType="RAISED"
+                       maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                       nodeOrientation="LEFT_TO_RIGHT" onAction="#close" text="Cancel" GridPane.columnIndex="1">
+                <font>
+                    <Font size="14.0"/>
+                </font>
+            </JFXButton>
+        </GridPane>
     </bottom>
     <top>
         <Label text="People" BorderPane.alignment="CENTER">
             <font>
-                <Font size="33.0" />
+                <Font size="33.0"/>
             </font>
             <BorderPane.margin>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
+                <Insets bottom="5.0" left="5.0" right="5.0" top="10.0"/>
             </BorderPane.margin>
         </Label>
     </top>
     <center>
-        <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+        <VBox prefHeight="420.0" prefWidth="230.0" BorderPane.alignment="CENTER">
             <BorderPane.margin>
-                <Insets left="10.0" right="10.0" />
+                <Insets left="10.0" right="10.0"/>
             </BorderPane.margin>
             <padding>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
             </padding>
             <JFXTextField fx:id="txtPerson" onAction="#addPerson" promptText="Person...">
                 <VBox.margin>
-                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                 </VBox.margin>
                 <padding>
-                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                 </padding>
             </JFXTextField>
-            <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0" prefWidth="186.0">
+            <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER"
+                        maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                        minWidth="-Infinity" prefHeight="329.0" prefWidth="210.0">
                 <VBox.margin>
-                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                 </VBox.margin>
-                <content>
-                    <VBox fx:id="chipPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="scroll-pane" />
-                </content>
+                <VBox fx:id="chipBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0"
+                      styleClass="chip-container"/>
             </ScrollPane>
         </VBox>
     </center>
-   <stylesheets>
-      <URL value="@../css/chip.css" />
-      <URL value="@../css/person.css" />
-   </stylesheets>
+    <stylesheets>
+        <URL value="@../css/chip.css"/>
+        <URL value="@../css/main.css"/>
+    </stylesheets>
 </BorderPane>

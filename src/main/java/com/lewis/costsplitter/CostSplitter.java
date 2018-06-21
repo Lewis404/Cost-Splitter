@@ -7,11 +7,11 @@ package com.lewis.costsplitter;
  */
 
 
-import com.jfoenix.controls.JFXDecorator;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -27,11 +27,10 @@ public class CostSplitter extends Application {
 	public void start(Stage primaryStage) throws IOException {
 		Parent parent = FXMLLoader.load(Objects.requireNonNull(
 				this.getClass().getClassLoader().getResource("views/people.fxml")));
-
-		JFXDecorator decorator = new JFXDecorator(primaryStage, parent, false, false, true);
-		decorator.setTitle("Cost Splitter");
-//		decorator.setCustomMaximize(true);
-		primaryStage.setScene(new Scene(decorator));
+		primaryStage.getIcons()
+		            .add(new Image(this.getClass().getClassLoader().getResourceAsStream("images/split.png")));
+		primaryStage.setTitle("Cost Splitter");
+		primaryStage.setScene(new Scene(parent));
 		primaryStage.show();
 	}
 }

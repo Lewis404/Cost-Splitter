@@ -1,5 +1,5 @@
 .chip {
-    -fx-background-color: #A6A6A6;
+    -fx-background-color: #dbdbdb;
     -fx-background-radius: 20;
     -fx-spacing: 5;
     -fx-alignment: center-left;
@@ -7,15 +7,30 @@
 }
 
 .chip .jfx-button {
-    -fx-background-radius: 20;
-    -fx-pref-height: 20;
+    -fx-background-color: #A6A6A6;
     -fx-pref-width: 20;
-    -fx-background-color: #666666;
-    -fx-text-fill: #abaaaa;
-    -fx-font-size: 12;
+    -fx-min-width: -fx-pref-width;
+    -fx-max-width: -fx-pref-width;
+    -fx-pref-height: 20;
+    -fx-min-height: -fx-pref-height;
+    -fx-max-height: -fx-pref-height;
+    -fx-background-radius: 20;
+    -fx-text-fill: #E0E0E0;
+    -fx-font-size: 8;
+    -fx-font-weight: BOLDER;
+}
+
+.chip .jfx-button .jfx-rippler{
+    -jfx-rippler-fill: BLACK;
 }
 
 .chip .label{
     -fx-alignment: center;
     -fx-content-display: center;
+}
+
+.chip-container {
+    -fx-padding: 5;
+    -fx-spacing: 5;
+    -fx-background-color: #ffffff;
 }

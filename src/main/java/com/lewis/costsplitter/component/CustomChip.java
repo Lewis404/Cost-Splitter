@@ -30,12 +30,12 @@ public class CustomChip extends HBox {
 		setText(value);
 	}
 
-	public void setText(String value) {
-		textProperty().set(value);
-	}
-
 	public String getText() {
 		return textProperty().get();
+	}
+
+	public void setText(String value) {
+		textProperty().set(value);
 	}
 
 	public StringProperty textProperty() {
@@ -46,6 +46,12 @@ public class CustomChip extends HBox {
 		if (this.getParent() instanceof Pane) {
 			((Pane) this.getParent()).getChildren().remove(this);
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "CustomChip{" + "text=" + text.getText() + ", bounds=" + this.localToScene(this.getBoundsInLocal()) +
+		       "}";
 	}
 
 }
