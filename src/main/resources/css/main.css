@@ -1,7 +1,15 @@
-.border{
+* {
+    -fx-primary: #9c27b0;
+    -fx-background: #eeeeee;
+    -fx-primary-text: #333333;
+}
+
+.root {
+    -fx-text-fill: -fx-primary-text;
     -fx-pref-height: 500;
+    -fx-font-family: "Segoe UI Light";
     -fx-pref-width: 250;
-    -fx-background-color: #ffffff;
+    -fx-background-color: -fx-background;
 }
 
 .button-container {
@@ -10,14 +18,47 @@
     -fx-pref-height: 48;
 }
 
+.jfx-text-field {
+    -jfx-focus-color: -fx-primary;
+}
+
 .jfx-button {
     -fx-font-size: 14;
-    -fx-background-color: rgb(77,102,204);
-    -fx-text-fill: #ffffff;
+}
+
+.important {
+    -fx-background-color: -fx-primary;
+    -fx-text-fill: -fx-background;
+}
+
+.lesser {
+    -fx-border-color: -fx-primary;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.icon {
+    -fx-icon-size: 20px;
+    -fx-icon-color: -fx-background;
 }
 
 .title {
+    -fx-font-family: "Segoe UI Semilight";
     -fx-font-size: 34;
+}
+
+.context-menu {
+    -fx-background-color: -fx-background;
+    -fx-background-radius: 3px;
+}
+
+.menu-item .label {
+    -fx-text-fill: -fx-primary-text;
+}
+
+.menu-item:hover {
+    -fx-background-color: #f4def8;
 }
 
 /*******************************************************************************
@@ -84,7 +125,7 @@
 .scroll-pane {
     -fx-background-insets: 0;
     -fx-padding: 0;
-    -fx-background-color: #ffffff;
+    -fx-background-color: -fx-background;
 }
 
 .scroll-pane:focused {

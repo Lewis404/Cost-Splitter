@@ -9,19 +9,29 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXScrollPane;
 import com.jfoenix.controls.JFXTextField;
 import com.lewis.costsplitter.component.CustomChip;
-import javafx.collections.ListChangeListener;
+import com.lewis.costsplitter.model.Dictionary;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
+import javafx.geometry.Side;
 import javafx.scene.Node;
-import javafx.scene.Parent;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class People {
 
@@ -31,12 +41,11 @@ public class People {
 	@FXML public VBox         chipBox;
 	@FXML public BorderPane   container;
 	@FXML public ScrollPane   scrollPane;
-
-	private Set<String> names;
+	private      ContextMenu  autoCompleteMenu;
 
 	@FXML
 	public void initialize() {
-//		names = FileUtils.Autocomplete.Names.load();
+		TreeSet<String> names = Dictionary.getNames();
 
 		// Set the scene to be not be resizeable
 		container.sceneProperty().addListener(((obsScene, oldScene, newScene) -> {
@@ -49,39 +58,28 @@ public class People {
 			}
 		}));
 
+		// disable the submit button if nothing is added
+		btnSubmit.disableProperty().bind(Bindings.isEmpty(chipBox.getChildren()));
+
 		JFXScrollPane.smoothScrolling(scrollPane);
 
-		// TODO: 21/06/2018 Figure out why fading isn't being applied and the nodes are not being retrieved correctly
-//		scrollPane.vvalueProperty().addListener(
-//				(observable, oldValue, newValue) -> performFade(getVisibleNodes(scrollPane, false), scrollPane,
-//				                                                false));
-//
-//		chipBox.getChildren().addListener((ListChangeListener<Node>) c -> {
-//			while (c.next()) {
-//				if (c.wasRemoved()) {
-//					chipBox.getChildren().forEach(node -> node.setOpacity(1.0));
-//					List<Node> nodes = getVisibleNodes(scrollPane, true);
-//					nodes.forEach(System.out::println);
-//					performFade(nodes, scrollPane, true);
-//				}
-//			}
-//		});
+		autoCompleteMenu = new ContextMenu();
+		txtPerson.textProperty().addListener(observable -> {
+			if (txtPerson.getText().length() == 0) {
+				autoCompleteMenu.hide();
+			} else {
+				LinkedList<String> results =
+						names.stream().filter(s -> s.toLowerCase().contains(txtPerson.getText().toLowerCase()))
+						     .collect(Collectors.toCollection(LinkedList::new));
+				if (results.size() > 0) {
+					populateAutoComplete(results);
+					if (!autoCompleteMenu.isShowing()) {
+						autoCompleteMenu.show(txtPerson, Side.BOTTOM, 5, 2);
+					}
+				}
 
-// TODO: 15/06/2018 Try to get autocomplete working
-//		JFXAutoCompletePopup<String> autoComplete = new JFXAutoCompletePopup<>();
-//		autoComplete.getSuggestions().addAll(names);
-//
-//		txtPerson.textProperty().addListener(observable -> {
-//			// Make the filter
-//			autoComplete.filter(item -> item.toLowerCase().contains(txtPerson.getText().toLowerCase()));
-//
-//			//Hide the popup if the suggestions are empty
-//			if (autoComplete.getFilteredSuggestions().isEmpty()) {
-//				autoComplete.hide();
-//			} else {
-//				autoComplete.show(txtPerson);
-//			}
-//		});
+			}
+		});
 
 		txtPerson.requestFocus();
 		for (int i = 0; i < 20; i++) {
@@ -91,24 +89,26 @@ public class People {
 
 	@FXML
 	public void submit() {
-		List<String> text     = new ArrayList<>();
-		Set<String>  newNames = new HashSet<>();
-		for (Iterator<Node> iterator = chipBox.getChildren().iterator(); iterator.hasNext(); ) {
-			CustomChip chip = (CustomChip) iterator.next();
-			String     name = chip.getText();
-			text.add(name);
-			if (!names.contains(name)) {
-				newNames.add(name);
-			}
-			iterator.remove();
+		List<String> names = new ArrayList<>();
+		chipBox.getChildrenUnmodifiable().stream().map(node -> ((CustomChip) node).getText()).forEach(names::add);
+		Dictionary.addNames(names);
+
+		Timeline             closing = new Timeline();
+		ObservableList<Node> nodes   = chipBox.getChildrenUnmodifiable();
+		for (int i = 0; i < nodes.size(); i++) {
+			Node       node     = nodes.get(i);
+			CustomChip chip     = ((CustomChip) node);
+			KeyFrame   keyFrame = new KeyFrame(Duration.millis(250 * i), event -> chip.remove(350, 0));
+			closing.getKeyFrames().add(keyFrame);
+
 		}
 
-//		Node  source = (Node) event.getSource();
-//		Stage stage  = (Stage) source.getScene().getWindow();
-//		stage.close();
-		System.out.println(text);
-		System.out.println(newNames);
-//		FileUtils.Autocomplete.Names.save(newNames, StandardOpenOption.APPEND);
+		closing.setOnFinished(event -> {
+			Stage stage = (Stage) container.getScene().getWindow();
+			stage.close();
+		});
+
+		Platform.runLater(closing::play);
 	}
 
 	@FXML
@@ -116,10 +116,9 @@ public class People {
 		addPerson(txtPerson.getText());
 	}
 
-	public void addPerson(String text) {
+	private void addPerson(String text) {
 		if (!text.isEmpty()) {
-			CustomChip chip = new CustomChip();
-			chip.setText(text);
+			CustomChip chip = new CustomChip(text);
 			chipBox.getChildren().add(chip);
 			txtPerson.clear();
 			txtPerson.requestFocus();
@@ -131,56 +130,20 @@ public class People {
 		((Stage) ((Node) event.getSource()).getScene().getWindow()).close();
 	}
 
-	private void performFade(List<Node> nodes, ScrollPane pane, boolean refresh) {
-		Bounds paneBounds = pane.localToScene(pane.getBoundsInParent());
-
-		for (int i = 0; i < nodes.size(); i++) {
-			Node   node        = nodes.get(i);
-			Bounds localBounds = node.localToScene(node.getBoundsInLocal());
-			double opacity     = 1.0; // Set to 1 by default
-			if (i == 0 && localBounds.getMinY() < 0) { // Scrolling out of the top
-				opacity = (localBounds.getMinY() + localBounds.getHeight()) / localBounds.getHeight();
-			}
-			if ((i == (nodes.size() - 1)) &&
-			    (localBounds.getMaxY() > paneBounds.getMaxY())) { // Scrolling out of the bottom
-				// On refresh the last item will be recognised as off the pane still as the removed element isn't
-				// removed from the children yet
-				opacity = (localBounds.getHeight() -
-				           (localBounds.getMaxY() - paneBounds.getMaxY() - (refresh ? localBounds.getHeight() : 0.0)
-				           )) /
-				          localBounds.getHeight();
-			}
-			node.setOpacity(opacity);
+	private void populateAutoComplete(List<String> results) {
+		autoCompleteMenu.getItems().clear();
+		int limit = 5;
+		if (results.size() > limit) {
+			results = results.subList(0, limit);
 		}
-	}
+		List<MenuItem> items = new LinkedList<>();
 
-	private List<Node> getVisibleNodes(ScrollPane pane, boolean refresh) {
-		Set<Node> visibleNodes = new LinkedHashSet<>();
-		Bounds    paneBounds   = pane.localToScene(pane.getBoundsInParent());
-		printBounds(paneBounds, "\npane");
-		if (pane.getContent() instanceof Parent) {
-			ObservableList<Node> childrenUnmodifiable = ((Parent) pane.getContent()).getChildrenUnmodifiable();
-			for (int i = 0; i < childrenUnmodifiable.size(); i++) {
-				Node   node       = childrenUnmodifiable.get(i);
-				Bounds nodeBounds = node.localToScene(node.getBoundsInLocal());
-				printBounds(nodeBounds, ((CustomChip) node).getText());
-				if (paneBounds.intersects(nodeBounds)) {
-					visibleNodes.add(node);
-					if (refresh && i + 1 < childrenUnmodifiable.size()) {
-						visibleNodes.add(childrenUnmodifiable.get(i + 1));
-					}
-				}
-			}
-		}
-		System.out.println("######################");
-		System.out.println("Visible");
-		visibleNodes.forEach(node -> printBounds(node.localToScene(node.getLayoutBounds()), ((CustomChip) node).getText()));
-		return new ArrayList<>(visibleNodes);
-	}
+		results.forEach(s -> {
+			MenuItem item = new MenuItem(s);
+			item.setOnAction(event -> txtPerson.setText(s));
+			items.add(item);
+		});
 
-	private void printBounds(Bounds bounds, String name) {
-		System.out.print(name + " -> ");
-		System.out.printf("BoundingBox [minX:%s, minY:%s, width:%s, height:%s, maxX:%s, maxY:%s]%n", bounds.getMinX(),
-		                  bounds.getMinY(), bounds.getWidth(), bounds.getHeight(), bounds.getMaxX(), bounds.getMaxY());
+		autoCompleteMenu.getItems().addAll(items);
 	}
 }

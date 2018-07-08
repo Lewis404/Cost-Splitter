@@ -3,7 +3,10 @@
     -fx-background-radius: 20;
     -fx-spacing: 5;
     -fx-alignment: center-left;
-    -fx-padding: 5, 5, 5, 5;
+    -fx-padding: 8px;
+    -fx-border-insets: 3px;
+    -fx-background-insets: 3px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.26), 10, 0.16, 0, 4);
 }
 
 .chip .jfx-button {
@@ -14,10 +17,7 @@
     -fx-pref-height: 20;
     -fx-min-height: -fx-pref-height;
     -fx-max-height: -fx-pref-height;
-    -fx-background-radius: 20;
-    -fx-text-fill: #E0E0E0;
-    -fx-font-size: 8;
-    -fx-font-weight: BOLDER;
+    -fx-background-radius: 15;
 }
 
 .chip .jfx-button .jfx-rippler{
@@ -32,5 +32,5 @@
 .chip-container {
     -fx-padding: 5;
     -fx-spacing: 5;
-    -fx-background-color: #ffffff;
+    -fx-background-color: -fx-background;
 }
