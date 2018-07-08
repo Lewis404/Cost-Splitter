@@ -12,12 +12,6 @@
     -fx-background-color: -fx-background;
 }
 
-.button-container {
-    -fx-alignment: center-left;
-    -fx-pref-width: 216;
-    -fx-pref-height: 48;
-}
-
 .jfx-text-field {
     -jfx-focus-color: -fx-primary;
 }

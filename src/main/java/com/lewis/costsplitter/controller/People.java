@@ -42,6 +42,7 @@ public class People {
 	@FXML public BorderPane   container;
 	@FXML public ScrollPane   scrollPane;
 	private      ContextMenu  autoCompleteMenu;
+	private      boolean      submitting;
 
 	@FXML
 	public void initialize() {
@@ -89,26 +90,37 @@ public class People {
 
 	@FXML
 	public void submit() {
-		List<String> names = new ArrayList<>();
-		chipBox.getChildrenUnmodifiable().stream().map(node -> ((CustomChip) node).getText()).forEach(names::add);
-		Dictionary.addNames(names);
+		if (!submitting) {
+			submitting = true;
+			List<String> names = new ArrayList<>();
+			chipBox.getChildrenUnmodifiable().stream().map(node -> ((CustomChip) node).getText()).forEach(names::add);
+			Dictionary.addNames(names);
 
-		Timeline             closing = new Timeline();
-		ObservableList<Node> nodes   = chipBox.getChildrenUnmodifiable();
-		for (int i = 0; i < nodes.size(); i++) {
-			Node       node     = nodes.get(i);
-			CustomChip chip     = ((CustomChip) node);
-			KeyFrame   keyFrame = new KeyFrame(Duration.millis(250 * i), event -> chip.remove(350, 0));
-			closing.getKeyFrames().add(keyFrame);
+			Timeline             closing          = new Timeline();
+			ObservableList<Node> nodes            = chipBox.getChildrenUnmodifiable();
+			int                  keyFrameDuration = 350;
+			for (int i = 0; i < nodes.size(); i++) {
+				Node       node     = nodes.get(i);
+				CustomChip chip     = ((CustomChip) node);
+				KeyFrame   keyFrame = new KeyFrame(Duration.millis(keyFrameDuration * i), event -> chip.remove(350));
+				closing.getKeyFrames().add(keyFrame);
+			}
 
+			int      wait  = (keyFrameDuration * (nodes.size() + 1));
+			KeyFrame pause = new KeyFrame(Duration.millis(wait));
+			closing.getKeyFrames().add(pause);
+
+			closing.setOnFinished(event -> close());
+
+			Platform.runLater(closing::play);
+		} else {
+			close();
 		}
+	}
 
-		closing.setOnFinished(event -> {
-			Stage stage = (Stage) container.getScene().getWindow();
-			stage.close();
-		});
-
-		Platform.runLater(closing::play);
+	private void close() {
+		Stage stage = (Stage) container.getScene().getWindow();
+		stage.close();
 	}
 
 	@FXML

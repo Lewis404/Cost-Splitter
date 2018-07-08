@@ -20,12 +20,12 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.material.Material;
 
 public class CustomChip extends HBox {
-	private JFXButton  close;
-	private Label      text;
-	private boolean    isAnimating = false;
-	private Transition transition;
-	private Bounds     positionBeforeAnimating;
-	private double     opacityBeforeAnimating;
+	private JFXButton close;
+	private Label     text;
+	private boolean   isAnimating = false;
+	private Timeline  transition;
+	private Bounds    positionBeforeAnimating;
+	private double    opacityBeforeAnimating;
 
 	public CustomChip() {
 		super();
@@ -38,7 +38,7 @@ public class CustomChip extends HBox {
 		this.text = new Label();
 		this.close.setOnMouseClicked(event -> {
 			if (event.getButton() == MouseButton.PRIMARY) {
-				remove(500, 0);
+				remove(750);
 			}
 		});
 		this.getStyleClass().add("chip");
@@ -71,37 +71,31 @@ public class CustomChip extends HBox {
 		return text.textProperty();
 	}
 
-	public void remove(double duration, double delay) {
+	public void remove(double duration) {
 		if (this.getParent() instanceof Pane) {
 			opacityBeforeAnimating = this.getOpacity();
 			positionBeforeAnimating = this.getBoundsInLocal();
-			transition = getRemoveAnimation(duration, delay);
+			transition = getRemoveAnimation(duration);
 			isAnimating = true;
 			transition.play();
 		}
 	}
 
-	public Transition getRemoveAnimation(double duration, double delay) {
-		PauseTransition pause = new PauseTransition(Duration.millis(delay));
+	private Timeline getRemoveAnimation(double duration) {
+		Timeline timeline = new Timeline();
 
-		pause.setOnFinished(e -> {
-			TranslateTransition slide = new TranslateTransition(Duration.millis(duration), this);
-			slide.setToX(-this.getWidth());
+		KeyValue opacity   = new KeyValue(this.opacityProperty(), 0);
+		KeyValue moveLeft = new KeyValue(this.translateXProperty(), -this.getWidth(), Interpolator.EASE_IN);
 
-			FadeTransition fade = new FadeTransition(Duration.millis(duration), this);
-			fade.setFromValue(this.getOpacity());
-			fade.setToValue(0.0);
+		KeyFrame fade  = new KeyFrame(Duration.millis(duration), opacity);
+		KeyFrame shift = new KeyFrame(Duration.millis(duration), moveLeft);
 
-			ParallelTransition transition = new ParallelTransition();
-			transition.getChildren().addAll(slide, fade);
+		timeline.getKeyFrames().add(fade);
+		timeline.getKeyFrames().add(shift);
 
-			transition.setOnFinished(event -> ((Pane) this.getParent()).getChildren().remove(this));
+		timeline.setOnFinished(event -> ((Pane) this.getParent()).getChildren().remove(this));
 
-			transition.play();
-		});
-
-
-		return pause;
+		return timeline;
 	}
 
 	@Override
