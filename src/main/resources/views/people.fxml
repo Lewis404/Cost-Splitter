@@ -17,7 +17,7 @@
 
 <BorderPane fx:id="container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
             prefHeight="520.0" prefWidth="226.0" styleClass="root" xmlns="http://javafx.com/javafx/8.0.171"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lewis.costsplitter.controller.People">
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lewis.costsplitter.controller.PeopleController">
     <bottom>
         <GridPane alignment="CENTER" hgap="5.0" vgap="5.0" BorderPane.alignment="CENTER">
             <BorderPane.margin>

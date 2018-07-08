@@ -7,6 +7,7 @@ package com.lewis.costsplitter;
  */
 
 
+import com.lewis.costsplitter.model.Dictionary;
 import com.lewis.costsplitter.utils.FileUtils;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -24,6 +25,8 @@ import java.util.Objects;
 public class CostSplitter extends Application {
 
 	public static void main(String[] args) {
+		Dictionary.load();
+		System.out.println(Dictionary.getInstance());
 		launch(args);
 	}
 

@@ -4,7 +4,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.layout.*?>
 <AnchorPane fx:id="container" prefHeight="498.0" prefWidth="813.0" xmlns="http://javafx.com/javafx/"
-            xmlns:fx="http://javafx.com/fxml/" fx:controller="com.lewis.costsplitter.controller.Main">
+            xmlns:fx="http://javafx.com/fxml/" fx:controller="com.lewis.costsplitter.controller.MainController">
     <padding>
         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
     </padding>

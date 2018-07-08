@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-public class People {
+public class PeopleController {
 
 	@FXML public JFXButton    btnSubmit;
 	@FXML public JFXButton    btnCancel;
@@ -46,7 +46,7 @@ public class People {
 
 	@FXML
 	public void initialize() {
-		TreeSet<String> names = Dictionary.getNames();
+		TreeSet<String> names = Dictionary.getInstance().getNames();
 
 		// Set the scene to be not be resizeable
 		container.sceneProperty().addListener(((obsScene, oldScene, newScene) -> {
@@ -83,9 +83,6 @@ public class People {
 		});
 
 		txtPerson.requestFocus();
-		for (int i = 0; i < 20; i++) {
-			addPerson("chip" + i);
-		}
 	}
 
 	@FXML
@@ -95,6 +92,7 @@ public class People {
 			List<String> names = new ArrayList<>();
 			chipBox.getChildrenUnmodifiable().stream().map(node -> ((CustomChip) node).getText()).forEach(names::add);
 			Dictionary.addNames(names);
+			Dictionary.save();
 
 			Timeline             closing          = new Timeline();
 			ObservableList<Node> nodes            = chipBox.getChildrenUnmodifiable();

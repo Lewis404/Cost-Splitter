@@ -20,7 +20,7 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 
-public class Main {
+public class MainController {
 	private static ObservableList<Person>      people     = FXCollections.observableArrayList();
 	public         JFXTreeTableView<Item>      tblItems;
 	public         JFXTextField                txtItemPrice;
