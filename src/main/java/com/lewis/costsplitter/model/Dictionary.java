@@ -34,7 +34,6 @@ public class Dictionary {
 	}
 
 	public static void addNames(String... names) {
-
 		ourInstance.names.addAll(Arrays.asList(names));
 	}
 
@@ -64,8 +63,6 @@ public class Dictionary {
 		try {
 			File       file       = FileUtils.getResourceAsPath("dictionary.json").toFile();
 			String     json       = gson.toJson(ourInstance);
-
-			file.createNewFile();
 
 			PrintWriter writer = new PrintWriter(file);
 			writer.print(json);

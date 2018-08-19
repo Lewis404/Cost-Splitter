@@ -16,12 +16,16 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -81,6 +85,17 @@ public class PeopleController {
 
 			}
 		});
+		// FIXME: 08/07/2018 Change over to context menu on down key from text box
+		txtPerson.addEventFilter(KeyEvent.ANY, System.out::println);
+		txtPerson.addEventFilter(KeyEvent.KEY_RELEASED, event -> {
+			if (event.getCode() == KeyCode.DOWN) {
+				event.consume();
+				if (autoCompleteMenu.isShowing()) {
+					autoCompleteMenu.requestFocus();
+				}
+			}
+		});
+
 
 		txtPerson.requestFocus();
 	}
@@ -116,11 +131,6 @@ public class PeopleController {
 		}
 	}
 
-	private void close() {
-		Stage stage = (Stage) container.getScene().getWindow();
-		stage.close();
-	}
-
 	@FXML
 	public void addPerson() {
 		addPerson(txtPerson.getText());
@@ -136,8 +146,8 @@ public class PeopleController {
 	}
 
 	@FXML
-	public void close(ActionEvent event) {
-		((Stage) ((Node) event.getSource()).getScene().getWindow()).close();
+	public void close() {
+		((Stage) container.getScene().getWindow()).close();
 	}
 
 	private void populateAutoComplete(List<String> results) {
